@@ -15,7 +15,6 @@ class TwitterConsumer extends AbstractConsumer {
     }
 }
 
-下準備はおれで完了です。
 
+あとはtwitter_api.phpを「app/controllers/conponents」にいれていただければ準備完了です。
 
-あとはコントローラに適当に書くだけです。
