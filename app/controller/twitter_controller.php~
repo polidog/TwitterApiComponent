@@ -21,8 +21,8 @@ class TwitterController extends AppController
 	}
 
 	function callback() {
-		// 認証に成功したら、ユーザー情報を取得す
-		$data = $this->TwitterApi->apiAccountVerify_credentials();
+		// 認証に成功したら、ユーザー情報を取得する
+		$data = $this->TwitterApi->apiStatusesUpdate(array('status'=>'札幌なう','lat'=>'43.039273','long'=>'141.343811'),"post");
 		var_dump($data);
 		exit("stop");
 	}
