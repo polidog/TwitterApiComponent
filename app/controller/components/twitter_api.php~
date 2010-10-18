@@ -87,12 +87,12 @@ class TwitterApiComponent extends Object
 		
 		$oauthStartAction = false;
 		if ( isset($this->autoStartAction['oauthStart']) ) {
-			$oauthStartAction = $this->autoStartAction['oauthStart'];
+			$oauthStartAction = Router::normalize($this->autoStartAction['oauthStart']);
 		}
 		
 		$oauthCallbackAction = false;
 		if ( isset($this->autoStartAction['oauthCallback']) ) {
-			$oauthCallbackAction = $this->autoStartAction['oauthCallback'];
+			$oauthCallbackAction = Router::normalize($this->autoStartAction['oauthCallback']);
 		}
 		
 		if ( !$oauthCallbackAction && !$oauthStartAction ) {
