@@ -1,4 +1,10 @@
 <?php
+/**
+ * TwitterApiComponent
+ * @author polidog http://www.polidog.jp
+ * @version 0.2
+ * @copyright polidog
+ */
 class TwitterApiComponent extends Object
 {
 	/**
@@ -50,6 +56,13 @@ class TwitterApiComponent extends Object
 	var $redirect	= true;	
 	
 	/**
+	 * AccessTokenをsessionに保存する際の名前
+	 * @var string
+	 * @access public
+	 */
+	var $sessionSaveAccessTokenName = "twitter_access_token";
+	
+	/**
 	 * APIの戻り値をデコードするかのフラグ
 	 * @var boolean
 	 * @access public
@@ -75,7 +88,7 @@ class TwitterApiComponent extends Object
 	 * @param AppController $controller
 	 * @param array $settings
 	 */
-	function initialize(&$controller,$settings ) {
+	function initialize(&$controller,$settings=null ) {
 		$this->_controller = &$controller;
 	}
 	
@@ -133,12 +146,14 @@ class TwitterApiComponent extends Object
 		// 拒否された場合
 		if ( !empty($this->params['url']['denied']) ) {
 			$this->_redirect('oauth_denied','拒否されました');
+			return false;
 		}
 		
 		// RequestTokenが取得できない
 		$requestToken = $this->Session->read('twitter_request_token');
 		if ( is_null($requestToken) ) {
 			$this->_redirect('oauth_noauthorize','認証に失敗しました');
+			return false;
 		}
 		
 		// accessTokenが取得できない
@@ -159,11 +174,20 @@ class TwitterApiComponent extends Object
 	 * AccessTOkenを保存する
 	 * @param $accessToken
 	 */
-	function _saveAccessToken($accessToken) {
-		$this->Session->write('twitter_access_token', $accessToken);
-		$this->accessToken = $accessToken;
+	function _saveAccessToken($accessToken,$key=null,$secret=null) {
+		if ( !$this->sessionSaveAccessTokenName ) {
+			return false;
+		}
+		if ( is_null($accessToken) && !is_null($key) && !is_null($secret) ) {
+			$accessToken = $this->_craeteOAuthToken($key,$secret);
+		}
+		if ( is_a($accessToken,"OAuthToken") === false ) {
+			return false;
+		}
+		
+		$this->Session->write($this->sessionSaveAccessTokenName, $accessToken);
 	}
-	
+
 	/**
 	 * AccessTokenを読み込む
 	 * @return mixed トークンがある場合は、AccessToken、ない場合はfalseがかえってくる
@@ -179,6 +203,18 @@ class TwitterApiComponent extends Object
 		}
 		return false;
 	}
+
+		
+	/**
+	 * OAuthトークンを作成する
+	 * @param string $key
+	 * @param string $secret
+	 * @return OAuthToken
+	 */
+	function _craeteOAuthToken($key,$secret) {
+		return new OAuthToken($key, $secret);
+	}
+	
 	
 	/**
 	 * accessTokenが取得済みか確認する
