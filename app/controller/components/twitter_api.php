@@ -175,17 +175,19 @@ class TwitterApiComponent extends Object
 	 * @param $accessToken
 	 */
 	function _saveAccessToken($accessToken,$key=null,$secret=null) {
-		if ( !$this->sessionSaveAccessTokenName ) {
-			return false;
-		}
 		if ( is_null($accessToken) && !is_null($key) && !is_null($secret) ) {
 			$accessToken = $this->_craeteOAuthToken($key,$secret);
 		}
+		
 		if ( is_a($accessToken,"OAuthToken") === false ) {
 			return false;
 		}
 		
-		$this->Session->write($this->sessionSaveAccessTokenName, $accessToken);
+		if ( $this->sessionSaveAccessTokenName ) {
+			$this->Session->write($this->sessionSaveAccessTokenName, $accessToken);
+		}
+		
+		$this->accessToken = $accessToken;
 	}
 
 	/**
