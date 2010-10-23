@@ -30,9 +30,16 @@ class TwitterApiComponent extends Object
 	
 	/**
 	 * API通信時に使用するURL
-	 * @var unknown_type
+	 * @var string
+	 * @access public
 	 */
 	var $apiBaseUrl	= "http://api.twitter.com/1/";
+	
+	/**
+	 * OAuth認証時のコールバックURLの指定
+	 * @var string
+	 */
+	var $oauthCallbackUrl = null;
 	
 	/**
 	 * OAuth用のコールバックの指定
@@ -133,7 +140,10 @@ class TwitterApiComponent extends Object
 	 * OAuth認証を開始する
 	 */
 	function oauthStart() {
-		$requestToken = $this->OauthConsumer->getRequestToken('Twitter', 'http://twitter.com/oauth/request_token', 'http://akj.polidog.jp/callback'); 
+		if ( is_null($this->oauthCallbackUrl) ) {
+			$this->oauthCallbackUrl = "http://".env('SERVER_NAME').$this->autoStartAction['oauthCallback'];
+		}
+		$requestToken = $this->OauthConsumer->getRequestToken('Twitter', 'http://twitter.com/oauth/request_token', $this->oauthCallbackUrl); 
 		$this->Session->write('twitter_request_token', $requestToken);
 		$this->_redirect($this->_getAuthorizeUrl( $requestToken->key ),null,true );
 	}
@@ -354,4 +364,5 @@ class TwitterApiComponent extends Object
 		}
 	}
 	
+
 }
