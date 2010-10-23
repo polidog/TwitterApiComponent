@@ -199,7 +199,11 @@ class TwitterApiComponent extends Object
 			return $this->accessToken;
 		}
 		
-		$a = $this->Session->read('twitter_access_token');
+		$a = null;
+		if ( $this->sessionSaveAccessTokenName ) {
+			$a = $this->Session->read($this->sessionSaveAccessTokenName);
+		}
+		
 		if ( !is_null($a) ) {
 			return $a;
 		}
@@ -223,7 +227,10 @@ class TwitterApiComponent extends Object
 	 * @return boolean
 	 */
 	function isAccessToken() {
-		$data = $this->Session->read('twitter_access_token');
+		$data = null;
+		if ( $this->sessionSaveAccessTokenName ) { 
+			$data = $this->Session->read($this->sessionSaveAccessTokenName);
+		}
 		if ( is_null($data) ) {
 			return false;
 		}
