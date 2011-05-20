@@ -83,6 +83,17 @@ class TwitterApiComponent extends Object
 	 */
 	var $apiassoc	= true;
 	
+	/**
+	 * TwitterのconsumerKey
+	 * @var string
+	 */
+	var $consumerKey = null;
+	
+	/**
+	 * TwitterのcounsumerSerctet
+	 * @var string
+	 */
+	var $consumerSercret = null;
 	
 	/**
 	 * access token
@@ -97,6 +108,13 @@ class TwitterApiComponent extends Object
 	 */
 	function initialize(&$controller,$settings=null ) {
 		$this->_controller = &$controller;
+		
+		if ( isset($controller->twitterApi) && is_array($controller->twitterApi)) {
+			foreach( $controller->twitterApi as $key => $value ) {
+				$this->$key = $value;
+			}
+		}
+		
 	}
 	
 	/**
@@ -364,5 +382,5 @@ class TwitterApiComponent extends Object
 		}
 	}
 	
-
+	
 }
