@@ -2,7 +2,7 @@
 /**
  * TwitterApiComponent
  * @author polidog http://www.polidog.jp
- * @version 0.3
+ * @version 0.4
  * @copyright polidog
  */
 class TwitterApiComponent extends Object
@@ -194,7 +194,7 @@ class TwitterApiComponent extends Object
 		}		
 		
 		// accessTokenを保存する
-		$this->_saveAccessToken($accessToken);
+		$this->saveAccessToken($accessToken);
 		
 		$this->_redirect('oauth_authorize',$this->oauthCallbackMessages['oauth_authorize']);
 		
@@ -205,7 +205,7 @@ class TwitterApiComponent extends Object
 	 * AccessTOkenを保存する
 	 * @param $accessToken
 	 */
-	function _saveAccessToken($accessToken,$key=null,$secret=null) {
+	function saveAccessToken($accessToken,$key=null,$secret=null) {
 		if ( is_null($accessToken) && !is_null($key) && !is_null($secret) ) {
 			$accessToken = $this->_craeteOAuthToken($key,$secret);
 		}
@@ -225,7 +225,7 @@ class TwitterApiComponent extends Object
 	 * AccessTokenを読み込む
 	 * @return mixed トークンがある場合は、AccessToken、ない場合はfalseがかえってくる
 	 */
-	function _readAccessToken() {
+	function readAccessToken() {
 		if ( !is_null($this->accessToken) ) {
 			return $this->accessToken;
 		}
@@ -239,6 +239,19 @@ class TwitterApiComponent extends Object
 			return $a;
 		}
 		return false;
+	}
+	
+	/**
+	 * AccessTokenを削除する
+	 * @return void
+	 */
+	function deleteAccessToken() {
+		if ( !is_null($this->accessToken) ) {
+			$this->accessToken = null;
+		}
+		if ( $this->sessionSaveAccessTokenName ) {
+			$$this->Session->delete($this->sessionSaveAccessTokenName);
+		}		
 	}
 
 		
@@ -276,7 +289,7 @@ class TwitterApiComponent extends Object
 	 */
 	function api( $path, $param=array(), $method="get", $format="json", $assoc=null ) {
 		
-		$accessToken = $this->_readAccessToken();
+		$accessToken = $this->readAccessToken();
 		if ( !$accessToken ) {
 			return false;
 		}		
