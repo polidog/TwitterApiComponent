@@ -1,10 +1,12 @@
+h1. 基本的な設定の仕方
+
 # OAuth consumer componentを入手する
 http://code.42dh.com/oauth/
 からOAuth consumer componentを入手する
 解凍後、OAuthディレクトリを「app/vendors」へいれる
 oauth_consumersフォルダと、oauth_consumer.phpを「app/controllers/conponents」にいれる
 # Consumerクラスの作成
-「app/controllers/components/oauth_consumers」にtwitter_consumer.phpを作成する
+「app/controllers/components/oauth_consumers」ディレクトリにtwitter_consumer.phpを作成する
 中身は以下の通り
 <pre><code class="php">
 class TwitterConsumer extends AbstractConsumer {
@@ -16,5 +18,45 @@ class TwitterConsumer extends AbstractConsumer {
 
 あとはtwitter_api.phpを「app/controllers/conponents」にいれていただければ準備完了です。
 
+h2. 簡単OAtuh認証設定
 
-■簡単にログインする方法にすてい
+TwitterApiComponentはControllerにて設定を記述するだけで簡単にOAuth認証をすることができます。
+<pre><code class="php">
+class AppController extends Controller {
+	
+	var $components = array('Session','TwitterApi','Security');
+	
+	/**
+	 * TwitterComponentの設定
+	 * @var array
+	 */
+	var $twitterApi = array(
+		'autoStartAction' => array(
+			'oauthStart' => '/session/start', // OAuth認証を開始するURL
+			'oauthCallback' => '/session/callback', // OAuth認証のコールバックURL
+		),
+		'redirectUrl' => array(
+			'oauth_denied'		=> '/', // 認証がユーザーにより拒否された場合の戻り先URL
+			'oauth_noauthorize' => '/', // 認証が失敗した場合の戻り先URL
+			'oauth_authorize'	=> '/session/login' // 認証に成功した場合のURL
+		),
+		'oauthCallbackMessages' => array(
+			'oauth_denied'		=> '拒否されました', // 認証がユーザーにより拒否された場合のエラーメッセージ
+			'oauth_noauthorize' => '認証に失敗しました', // 認証が失敗した場合のエラーメッセージ
+			'oauth_authorize'	=> 'ログインが完了しました' // 認証に成功した場合のメッセージ
+		),
+	);
+	
+}
+</pre>
+
+ちなみにメッセージを表示したくないときは以下のようにしてあげればいいです。
+<pre><code class="php">
+		'oauthCallbackMessages' => array(
+			'oauth_denied'		=> null
+			'oauth_noauthorize' => null
+			'oauth_authorize'	=> null
+		),
+</pre>
+
+
