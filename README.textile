@@ -48,7 +48,7 @@ class AppController extends Controller {
 	);
 	
 }
-</pre>
+</code></pre>
 
 ちなみにメッセージを表示したくないときは以下のようにしてあげればいいです。
 <pre><code class="php">
@@ -57,6 +57,6 @@ class AppController extends Controller {
 			'oauth_noauthorize' => null
 			'oauth_authorize'	=> null
 		),
-</pre>
+</code></pre>
 
 
