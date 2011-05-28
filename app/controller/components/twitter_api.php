@@ -2,7 +2,7 @@
 /**
  * TwitterApiComponent
  * @author polidog http://www.polidog.jp
- * @version 0.2
+ * @version 0.3
  * @copyright polidog
  */
 class TwitterApiComponent extends Object
@@ -46,14 +46,28 @@ class TwitterApiComponent extends Object
 	 * @var array
 	 * @access public
 	 */
-	var $autoStartAction = array('oauthStart' =>'/twitter/index' ,'oauthCallback' => '/twitter/callback');
+	var $autoStartAction = array(
+		'oauthStart' =>'/twitter/index' ,
+		'oauthCallback' => '/twitter/callback',
+	);
 	
 	/**
-	 * リダイレクト時のURL
+	 * OAuth認証時のリダイレクト時のURL
 	 * @var array
 	 * @access public
 	 */
-	var $redirectUrl = array('oauth_denied' => '/twitter','oauth_noauthorize' => '/twitter','oauth_authorize' => '/twitter');
+	var $redirectUrl = array(
+		'oauth_denied'		=> '/twitter',
+		'oauth_noauthorize' => '/twitter',
+		'oauth_authorize'	=> '/twitter'
+	);
+	
+	var $oauthCallbackMessages = array(
+		'oauth_denied'		=> '拒否されました',
+		'oauth_noauthorize' => '認証に失敗しました',
+		'oauth_authorize'	=> '認証が完了しました'
+	);
+	
 	
 	/**
 	 * リダイレクトを許可する、しないを選択する
@@ -83,17 +97,6 @@ class TwitterApiComponent extends Object
 	 */
 	var $apiassoc	= true;
 	
-	/**
-	 * TwitterのconsumerKey
-	 * @var string
-	 */
-	var $consumerKey = null;
-	
-	/**
-	 * TwitterのcounsumerSerctet
-	 * @var string
-	 */
-	var $consumerSercret = null;
 	
 	/**
 	 * access token
@@ -173,27 +176,27 @@ class TwitterApiComponent extends Object
 		
 		// 拒否された場合
 		if ( !empty($this->params['url']['denied']) ) {
-			$this->_redirect('oauth_denied','拒否されました');
+			$this->_redirect('oauth_denied',$this->oauthCallbackMessages['oauth_denied']);
 			return false;
 		}
 		
 		// RequestTokenが取得できない
 		$requestToken = $this->Session->read('twitter_request_token');
 		if ( is_null($requestToken) ) {
-			$this->_redirect('oauth_noauthorize','認証に失敗しました');
+			$this->_redirect('oauth_noauthorize',$this->oauthCallbackMessages['oauth_noauthorize']);
 			return false;
 		}
 		
 		// accessTokenが取得できない
 		$accessToken = $this->OauthConsumer->getAccessToken('Twitter', 'http://twitter.com/oauth/access_token', $requestToken);
 		if ( is_null($accessToken) ) {
-			$this->_redirect('oauth_noauthorize','認証に失敗しました');
+			$this->_redirect('oauth_noauthorize',$this->oauthCallbackMessages['oauth_noauthorize']);
 		}		
 		
 		// accessTokenを保存する
 		$this->_saveAccessToken($accessToken);
 		
-		$this->_redirect('oauth_authorize','認証が完了しました');
+		$this->_redirect('oauth_authorize',$this->oauthCallbackMessages['oauth_authorize']);
 		
 		
 	}
