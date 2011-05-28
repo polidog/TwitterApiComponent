@@ -14,7 +14,7 @@ class TwitterConsumer extends AbstractConsumer {
     	parent::__construct('YOUR_CONSUMER_KEY', 'YOUR_CONSUMER_SECRET');
     }
 }
-</pre>
+</code></pre>
 
 あとはtwitter_api.phpを「app/controllers/conponents」にいれていただければ準備完了です。
 
@@ -23,7 +23,7 @@ h2. 簡単OAtuh認証設定
 TwitterApiComponentはControllerにて設定を記述するだけで簡単にOAuth認証をすることができます。
 <pre><code class="php">
 class AppController extends Controller {
-	
+		
 	var $components = array('Session','TwitterApi','Security');
 	
 	/**
